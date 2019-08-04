@@ -6,4 +6,8 @@
         android:id="@+id/new_deal_option"
         android:title="@string/new_trave_deal_option_text"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/logout_option"
+        android:title="@string/logout_text"
+        app:showAsAction="never" />
 </menu>

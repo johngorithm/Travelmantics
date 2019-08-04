@@ -9,7 +9,11 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.Toast;
 
+import com.firebase.ui.auth.AuthUI;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.jwx.travelmantics.R;
 import com.jwx.travelmantics.common.BaseActivity;
 import com.jwx.travelmantics.deal_creation.InsertActivity;
@@ -25,8 +29,6 @@ public class ListActivity extends BaseActivity implements DealListView {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);
         FirebaseApiService.initAuthState(this);
-
-//        initProperties();
     }
 
     private void initProperties() {
@@ -56,8 +58,27 @@ public class ListActivity extends BaseActivity implements DealListView {
             case R.id.new_deal_option:
                 showInsertDealActivity();
                 break;
+            case R.id.logout_option:
+                logout();
         }
         return true;
+    }
+
+    private void logout() {
+        AuthUI.getInstance()
+                .signOut(this)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            Toast.makeText(ListActivity.this, "Logout Successful", Toast.LENGTH_LONG).show();
+                            FirebaseApiService.addAuthListener();
+                            return;
+                        }
+
+                        Toast.makeText(ListActivity.this, "Unable to logout. Mind trying again?", Toast.LENGTH_LONG).show();
+                    }
+                });
+        FirebaseApiService.removeAuthListener();
     }
 
     private void showInsertDealActivity() {
