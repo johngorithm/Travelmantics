@@ -3,6 +3,7 @@ package com.jwx.travelmantics.models;
 import javax.annotation.Nullable;
 
 public class TravelDeal {
+    private String uid;
     private String title;
     private String price;
     private String description;
@@ -19,6 +20,15 @@ public class TravelDeal {
         this.description = description;
         this.image = imageUrl;
     }
+
+    public String getUid() {
+        return uid;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
+    }
+
 
     public String getImage() {
         return image;
