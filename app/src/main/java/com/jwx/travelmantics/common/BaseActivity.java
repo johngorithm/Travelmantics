@@ -15,7 +15,7 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     public void showProgressDialog(String title) {
-        progressDialog.setTitle(title);
+        progressDialog.setMessage(title);
         progressDialog.show();
     }
 

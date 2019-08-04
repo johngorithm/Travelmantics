@@ -1,8 +1,17 @@
 package com.jwx.travelmantics.models;
 
+import com.google.firebase.database.Exclude;
+import com.google.firebase.database.IgnoreExtraProperties;
+
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.annotation.Nullable;
 
-public class TravelDeal {
+
+@IgnoreExtraProperties
+public class TravelDeal implements Serializable {
     private String uid;
     private String title;
     private String price;
@@ -61,5 +70,15 @@ public class TravelDeal {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    @Exclude
+    public Map<String, Object> toMap() {
+        HashMap<String, Object> result = new HashMap<>();
+
+        result.put("title", title);
+        result.put("price", price);
+        result.put("description", description);
+        return result;
     }
 }

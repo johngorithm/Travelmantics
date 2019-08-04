@@ -1,9 +1,8 @@
 package com.jwx.travelmantics.deal_creation;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -12,11 +11,14 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.jwx.travelmantics.R;
+import com.jwx.travelmantics.common.BaseActivity;
+import com.jwx.travelmantics.constants.Constants;
+import com.jwx.travelmantics.deal_listing.ListActivity;
 import com.jwx.travelmantics.models.TravelDeal;
 
-public class InsertActivity extends AppCompatActivity implements InsertView {
-    private ProgressDialog progressDialog;
+public class InsertActivity extends BaseActivity implements InsertView {
     private DealPresenter dealPresenter;
+    private TravelDeal deal;
 
     private EditText titleInput, priceInput, descInput;
 
@@ -25,18 +27,27 @@ public class InsertActivity extends AppCompatActivity implements InsertView {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
         initProperties();
     }
 
     private void initProperties() {
-        progressDialog = new ProgressDialog(this);
-        progressDialog.setTitle("Saving ...");
 
         titleInput = findViewById(R.id.deal_name_input);
         priceInput = findViewById(R.id.price_input);
         descInput = findViewById(R.id.description_input);
 
         dealPresenter = new DealPresenter(this);
+
+        if (getIntent().hasExtra(Constants.DEAL_DATA_ID)) {
+            deal = (TravelDeal) getIntent().getSerializableExtra(Constants.DEAL_DATA_ID);
+        } else  {
+            deal = new TravelDeal();
+        }
+
+        titleInput.setText(deal.getTitle());
+        priceInput.setText(deal.getPrice());
+        descInput.setText(deal.getDescription());
     }
 
 
@@ -53,6 +64,9 @@ public class InsertActivity extends AppCompatActivity implements InsertView {
             case R.id.menu_save_option:
                 saveDealData();
                 break;
+            case R.id.delete_deal_option:
+                deleteDeal();
+                break;
         }
         return true;
     }
@@ -66,29 +80,64 @@ public class InsertActivity extends AppCompatActivity implements InsertView {
     }
 
     private void saveDealData() {
-        progressDialog.show();
+        super.showProgressDialog("Saving ...");
 
-        String title = titleInput.getText().toString();
-        String price = priceInput.getText().toString();
-        String desc = descInput.getText().toString();
+        deal.setTitle(titleInput.getText().toString());
+        deal.setPrice(priceInput.getText().toString());
+        deal.setDescription(descInput.getText().toString());
 
         // TODO: VALIDATE USER INPUT;
 
-        TravelDeal travelDeal = new TravelDeal(title, price, desc, null);
+        if (deal.getUid() != null) {
+            dealPresenter.updateDeal(deal);
+            return;
+        }
+        dealPresenter.saveTravelDealData(deal);
+    }
 
-        dealPresenter.saveTravelDealData(travelDeal);
+    private void deleteDeal() {
+        if (deal.getUid() == null) {
+            Toast.makeText(this, "Deletion Failed. Have you saved the deal?", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        dealPresenter.deleteDeal(deal);
     }
 
     @Override
-    public void onSaveComplete() {
-        progressDialog.hide();
+    public void onSaveComplete(String message) {
+        super.hideProgressDialog();
         clearInputs();
-        Toast.makeText(this, "Deal Saved!", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+        showListActivity();
     }
 
     @Override
-    public void onSaveError() {
-        progressDialog.hide();
-        Toast.makeText(this, "Oops!... Unable to save data. Mind trying again?", Toast.LENGTH_SHORT).show();
+    public void onSaveError(String message) {
+        super.hideProgressDialog();
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+        showListActivity();
     }
+
+    @Override
+    public void onDeleteDeal(String message) {
+        super.hideProgressDialog();
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+        showListActivity();
+    }
+
+    @Override
+    public void onDeleteDealError(String message) {
+        super.hideProgressDialog();
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+        showListActivity();
+    }
+
+    private void showListActivity(){
+        Intent intent = new Intent(this, ListActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
+
 }

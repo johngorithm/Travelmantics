@@ -12,12 +12,12 @@ import com.jwx.travelmantics.constants.Constants;
 import com.jwx.travelmantics.models.TravelDeal;
 import com.jwx.travelmantics.services.FirebaseApiService;
 
-public class DealListPresenter {
+class DealListPresenter {
 
     private DatabaseReference fbRootRef;
     private DealListView dealListView;
 
-    public DealListPresenter(DealListView view){
+    DealListPresenter(DealListView view){
         dealListView = view;
         fbRootRef = FirebaseApiService.getFbRootRef();
     }
@@ -35,7 +35,7 @@ public class DealListPresenter {
 
             @Override
             public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
+                
             }
 
             @Override

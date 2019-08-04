@@ -36,6 +36,9 @@ public class ListActivity extends BaseActivity implements DealListView {
 
         adapter = new DealListAdapter(this);
         dealRecyclerView.setAdapter(adapter);
+
+        showProgressDialog("Loading ...");
+        dealListPresenter.fetchDeals();
     }
 
     @Override
@@ -58,13 +61,6 @@ public class ListActivity extends BaseActivity implements DealListView {
     private void showInsertDealActivity() {
         Intent intent = new Intent(ListActivity.this, InsertActivity.class);
         startActivity(intent);
-    }
-
-    @Override
-    protected void onStart() {
-        showProgressDialog("Loading ...");
-        dealListPresenter.fetchDeals();
-        super.onStart();
     }
 
     @Override

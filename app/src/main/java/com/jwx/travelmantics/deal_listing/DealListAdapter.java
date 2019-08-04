@@ -1,6 +1,8 @@
 package com.jwx.travelmantics.deal_listing;
 
 import android.content.Context;
+import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,14 +13,18 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.jwx.travelmantics.R;
+import com.jwx.travelmantics.constants.Constants;
+import com.jwx.travelmantics.deal_creation.InsertActivity;
 import com.jwx.travelmantics.models.TravelDeal;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class DealListAdapter extends RecyclerView.Adapter<DealListAdapter.DealViewHolder> {
+
+public class DealListAdapter extends RecyclerView.Adapter<DealListAdapter.DealViewHolder>{
     private List<TravelDeal> travelDeals = new ArrayList<>();
     private Context mContext;
+    private static final String TAG = "DealListAdapter";
 
     DealListAdapter(Context context) {
         mContext = context;
@@ -46,7 +52,7 @@ public class DealListAdapter extends RecyclerView.Adapter<DealListAdapter.DealVi
         return travelDeals.size();
     }
 
-    class DealViewHolder extends RecyclerView.ViewHolder {
+    class DealViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private ImageView dealImage;
         private TextView titleView, priceView, descView;
 
@@ -56,11 +62,23 @@ public class DealListAdapter extends RecyclerView.Adapter<DealListAdapter.DealVi
             titleView = itemView.findViewById(R.id.tv_deal_title);
             priceView = itemView.findViewById(R.id.tv_price);
             descView = itemView.findViewById(R.id.tv_deal_desc);
+            itemView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View view) {
+            int position = getAdapterPosition();
+            Log.i(TAG, "onClick: "+position);
+
+            TravelDeal deal = travelDeals.get(position);
+            Intent intent = new Intent(mContext, InsertActivity.class);
+            intent.putExtra(Constants.DEAL_DATA_ID, deal);
+            view.getContext().startActivity(intent);
         }
     }
 
     void setDeal(TravelDeal deal) {
         travelDeals.add(deal);
-        notifyItemChanged(travelDeals.size());
+        notifyItemInserted(travelDeals.size() - 1);
     }
 }
