@@ -14,6 +14,7 @@ import com.jwx.travelmantics.R;
 import com.jwx.travelmantics.common.BaseActivity;
 import com.jwx.travelmantics.deal_creation.InsertActivity;
 import com.jwx.travelmantics.models.TravelDeal;
+import com.jwx.travelmantics.services.FirebaseApiService;
 
 public class ListActivity extends BaseActivity implements DealListView {
     private DealListAdapter adapter;
@@ -23,8 +24,9 @@ public class ListActivity extends BaseActivity implements DealListView {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);
+        FirebaseApiService.initAuthState(this);
 
-        initProperties();
+//        initProperties();
     }
 
     private void initProperties() {
@@ -67,5 +69,18 @@ public class ListActivity extends BaseActivity implements DealListView {
     public void onDealAdded(TravelDeal deal) {
         super.hideProgressDialog();
         adapter.setDeal(deal);
+    }
+
+    @Override
+    protected void onResume() {
+        FirebaseApiService.addAuthListener();
+        initProperties();
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        FirebaseApiService.removeAuthListener();
+        super.onPause();
     }
 }
