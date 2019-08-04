@@ -6,4 +6,5 @@
     <string name="description_hint">Description</string>
     <string name="save_menu_text">Save</string>
     <string name="card_image_desc">card image</string>
+    <string name="new_trave_deal_option_text">New Trave Deal</string>
 </resources>
