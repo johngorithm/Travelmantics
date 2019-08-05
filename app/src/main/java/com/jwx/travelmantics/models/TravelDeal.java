@@ -17,17 +17,27 @@ public class TravelDeal implements Serializable {
     private String price;
     private String description;
     private String image;
+    private String imageName;
 
     public TravelDeal(){
         // Empty constructor for firebase json data conversion
     }
 
 
-    public TravelDeal(String title, String price, String description, @Nullable String imageUrl) {
-        this.title = title;
-        this.price = price;
-        this.description = description;
-        this.image = imageUrl;
+    public TravelDeal(String title, String price, String description, @Nullable String imageUrl, String imageName) {
+        this.setTitle(title);
+        this.setPrice(price);
+        this.setDescription(description);
+        this.setImage(imageUrl);
+        this.setImageName(imageName);
+    }
+
+    public String getImageName() {
+        return imageName;
+    }
+
+    public void setImageName(String image_name) {
+        this.imageName = image_name;
     }
 
     public String getUid() {
@@ -80,6 +90,7 @@ public class TravelDeal implements Serializable {
         result.put("price", price);
         result.put("description", description);
         result.put("image", image);
+        result.put("imageName", imageName);
         return result;
     }
 }

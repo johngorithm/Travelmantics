@@ -2,6 +2,7 @@ package com.jwx.travelmantics.deal_creation;
 
 import android.content.Context;
 import android.net.Uri;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -17,6 +18,7 @@ import com.jwx.travelmantics.models.TravelDeal;
 import com.jwx.travelmantics.services.FirebaseApiService;
 
 class DealPresenter {
+    private static final String TAG = "DealPresenter";
 
     private DatabaseReference fbRootRef;
     private InsertView insertView;
@@ -103,10 +105,16 @@ class DealPresenter {
             @Override
             public void onComplete(@NonNull Task<Uri> task) {
                 if (task.isSuccessful()) {
-                    Toast.makeText(context, "Image Successfully Uploaded", Toast.LENGTH_LONG).show();
-                    Uri downloadUri = task.getResult();
-                    String imgUrl = downloadUri.toString();
-                    insertView.onImageUploadSuccess(imgUrl);
+                    Toast.makeText(context, "Image Successfully Uploaded. Ensure to SAVE the update",
+                            Toast.LENGTH_LONG).show();
+
+                    String imgUrl = task.getResult().toString();
+                    String imageName = task.getResult().getLastPathSegment().split("/")[1];
+
+                    Log.i(TAG, "onComplete: "+imgUrl);
+                    Log.i(TAG, "onComplete: "+imageName);
+
+                    insertView.onImageUploadSuccess(imgUrl, imageName);
                 } else if (task.getException() != null){
                     String msg = task.getException().getMessage();
                     insertView.onSaveError(msg);

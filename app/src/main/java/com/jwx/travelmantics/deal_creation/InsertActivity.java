@@ -176,7 +176,6 @@ public class InsertActivity extends BaseActivity implements InsertView {
     private void showListActivity(){
         Intent intent = new Intent(this, ListActivity.class);
         startActivity(intent);
-        finish();
     }
 
 
@@ -198,8 +197,9 @@ public class InsertActivity extends BaseActivity implements InsertView {
     }
 
     @Override
-    public void onImageUploadSuccess(String imageUrl) {
+    public void onImageUploadSuccess(String imageUrl, String imageName) {
         deal.setImage(imageUrl);
+        deal.setImageName(imageName);
         showImage(imageUrl);
         super.hideProgressDialog();
     }
@@ -214,4 +214,6 @@ public class InsertActivity extends BaseActivity implements InsertView {
                     .into(dealImageView);
         }
     }
+
+
 }

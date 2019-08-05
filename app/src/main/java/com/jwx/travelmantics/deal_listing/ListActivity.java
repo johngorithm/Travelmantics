@@ -22,26 +22,28 @@ import com.jwx.travelmantics.services.FirebaseApiService;
 
 public class ListActivity extends BaseActivity implements DealListView {
     private DealListAdapter adapter;
+    private DealListPresenter dealListPresenter;
+    private RecyclerView dealRecyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);
         FirebaseApiService.initAuthState(this);
+
+        initProperties();
     }
 
     private void initProperties() {
-        DealListPresenter dealListPresenter = new DealListPresenter(this);
+        dealListPresenter = new DealListPresenter(this);
 
-        RecyclerView dealRecyclerView = findViewById(R.id.deal_list_recycler_view);
+        dealRecyclerView = findViewById(R.id.deal_list_recycler_view);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         dealRecyclerView.setLayoutManager(layoutManager);
 
-        adapter = new DealListAdapter(this);
-        dealRecyclerView.setAdapter(adapter);
+
 
         showProgressDialog("Loading ...");
-        dealListPresenter.fetchDeals();
     }
 
     @Override
@@ -101,8 +103,10 @@ public class ListActivity extends BaseActivity implements DealListView {
 
     @Override
     protected void onResume() {
+        adapter = new DealListAdapter(this);
+        dealRecyclerView.setAdapter(adapter);
         FirebaseApiService.addAuthListener();
-        initProperties();
+        dealListPresenter.fetchDeals();
         super.onResume();
     }
 
