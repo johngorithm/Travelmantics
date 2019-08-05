@@ -25,7 +25,6 @@ import java.util.List;
 public class DealListAdapter extends RecyclerView.Adapter<DealListAdapter.DealViewHolder>{
     private List<TravelDeal> travelDeals = new ArrayList<>();
     private Context mContext;
-    private static final String TAG = "DealListAdapter";
 
     DealListAdapter(Context context) {
         mContext = context;

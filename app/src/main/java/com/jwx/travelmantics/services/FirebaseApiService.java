@@ -28,8 +28,6 @@ public class FirebaseApiService {
 
     private static FirebaseAuth fbAuth;
     private static FirebaseAuth.AuthStateListener authStateListener;
-    public static FirebaseStorage firebaseStorage;
-    public static StorageReference storageReference;
     private static final int RC_SIGN_IN = 123;
     public static boolean isAdmin;
 
@@ -59,7 +57,7 @@ public class FirebaseApiService {
     }
 
     public static StorageReference getStorageRootRef() {
-        firebaseStorage = FirebaseStorage.getInstance();
+        FirebaseStorage firebaseStorage = FirebaseStorage.getInstance();
         return  firebaseStorage.getReference();
     }
 
