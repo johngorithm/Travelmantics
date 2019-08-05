@@ -15,6 +15,7 @@ import com.jwx.travelmantics.common.BaseActivity;
 import com.jwx.travelmantics.constants.Constants;
 import com.jwx.travelmantics.deal_listing.ListActivity;
 import com.jwx.travelmantics.models.TravelDeal;
+import com.jwx.travelmantics.services.FirebaseApiService;
 
 public class InsertActivity extends BaseActivity implements InsertView {
     private DealPresenter dealPresenter;
@@ -55,6 +56,19 @@ public class InsertActivity extends BaseActivity implements InsertView {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.save_menu, menu);
+
+        MenuItem saveOption = menu.findItem(R.id.menu_save_option);
+        MenuItem deleteOption = menu.findItem(R.id.delete_deal_option);
+
+        if (FirebaseApiService.isAdmin) {
+            saveOption.setVisible(true);
+            deleteOption.setVisible(true);
+            enableEditFields(true);
+        } else {
+            saveOption.setVisible(false);
+            deleteOption.setVisible(false);
+            enableEditFields(false);
+        }
         return true;
     }
 
@@ -140,4 +154,10 @@ public class InsertActivity extends BaseActivity implements InsertView {
     }
 
 
+    private void enableEditFields(boolean isEnabled) {
+        titleInput.setEnabled(isEnabled);
+        priceInput.setEnabled(isEnabled);
+        descInput.setEnabled(isEnabled);
+
+    }
 }

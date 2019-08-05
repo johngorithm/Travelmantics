@@ -22,7 +22,6 @@ import com.jwx.travelmantics.services.FirebaseApiService;
 
 public class ListActivity extends BaseActivity implements DealListView {
     private DealListAdapter adapter;
-    private DealListPresenter dealListPresenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,7 +31,7 @@ public class ListActivity extends BaseActivity implements DealListView {
     }
 
     private void initProperties() {
-        dealListPresenter = new DealListPresenter(this);
+        DealListPresenter dealListPresenter = new DealListPresenter(this);
 
         RecyclerView dealRecyclerView = findViewById(R.id.deal_list_recycler_view);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
@@ -49,6 +48,14 @@ public class ListActivity extends BaseActivity implements DealListView {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.list_activity_menu, menu);
+
+        MenuItem insertMenu = menu.findItem(R.id.new_deal_option);
+        if (FirebaseApiService.isAdmin) {
+            insertMenu.setVisible(true);
+        } else {
+            insertMenu.setVisible(false);
+        }
+
         return true;
     }
 
@@ -103,5 +110,10 @@ public class ListActivity extends BaseActivity implements DealListView {
     protected void onPause() {
         FirebaseApiService.removeAuthListener();
         super.onPause();
+    }
+
+
+    public void showMenu() {
+        invalidateOptionsMenu();
     }
 }
