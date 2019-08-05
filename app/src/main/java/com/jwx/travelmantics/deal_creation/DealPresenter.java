@@ -1,10 +1,17 @@
 package com.jwx.travelmantics.deal_creation;
 
+import android.content.Context;
+import android.net.Uri;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 
+import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.jwx.travelmantics.constants.Constants;
 import com.jwx.travelmantics.models.TravelDeal;
 import com.jwx.travelmantics.services.FirebaseApiService;
@@ -13,10 +20,12 @@ class DealPresenter {
 
     private DatabaseReference fbRootRef;
     private InsertView insertView;
+    private Context context;
 
     DealPresenter(InsertView view){
         insertView = view;
         fbRootRef = FirebaseApiService.getFbRootRef();
+        context = (Context) view;
     }
 
     void saveTravelDealData(TravelDeal travelDeal) {
@@ -67,5 +76,44 @@ class DealPresenter {
 
                     }
                 });
+    }
+
+
+    void uploadImage(Uri imageUri) {
+        if(imageUri == null || imageUri.getLastPathSegment() == null) {
+            return;
+        }
+        final StorageReference filePath = FirebaseApiService.getStorageRootRef()
+                .child(imageUri.getLastPathSegment());
+
+        Task<UploadTask.TaskSnapshot> uploadTask = filePath.putFile(imageUri);
+
+        Task<Uri> uriTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+            @Override
+            public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task){
+                if (!task.isSuccessful()) {
+                    String msg = task.getException().getMessage();
+                    insertView.onSaveError(msg);
+                }
+                return filePath.getDownloadUrl();
+            }
+        });
+
+        uriTask.addOnCompleteListener(new OnCompleteListener<Uri>() {
+            @Override
+            public void onComplete(@NonNull Task<Uri> task) {
+                if (task.isSuccessful()) {
+                    Toast.makeText(context, "Image Successfully Uploaded", Toast.LENGTH_LONG).show();
+                    Uri downloadUri = task.getResult();
+                    String imgUrl = downloadUri.toString();
+                    insertView.onImageUploadSuccess(imgUrl);
+                } else if (task.getException() != null){
+                    String msg = task.getException().getMessage();
+                    insertView.onSaveError(msg);
+                } else {
+                    insertView.onSaveError("Unable to get image link");
+                }
+            }
+        });
     }
 }

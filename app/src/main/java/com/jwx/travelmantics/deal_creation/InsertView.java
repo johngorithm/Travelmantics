@@ -5,4 +5,5 @@ public interface InsertView {
     void onSaveError(String message);
     void onDeleteDeal(String message);
     void onDeleteDealError(String message);
+    void onImageUploadSuccess(String imageUrl);
 }

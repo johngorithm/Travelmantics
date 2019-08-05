@@ -1,13 +1,19 @@
 package com.jwx.travelmantics.deal_creation;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import android.content.Intent;
+import android.content.res.Resources;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.jwx.travelmantics.R;
@@ -16,17 +22,20 @@ import com.jwx.travelmantics.constants.Constants;
 import com.jwx.travelmantics.deal_listing.ListActivity;
 import com.jwx.travelmantics.models.TravelDeal;
 import com.jwx.travelmantics.services.FirebaseApiService;
+import com.squareup.picasso.Picasso;
 
 public class InsertActivity extends BaseActivity implements InsertView {
     private DealPresenter dealPresenter;
     private TravelDeal deal;
+    private static final int PICTURE_REQUEST_CODE = 19;
 
     private EditText titleInput, priceInput, descInput;
+    private ImageView dealImageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_insert);
 
 
         initProperties();
@@ -37,6 +46,8 @@ public class InsertActivity extends BaseActivity implements InsertView {
         titleInput = findViewById(R.id.deal_name_input);
         priceInput = findViewById(R.id.price_input);
         descInput = findViewById(R.id.description_input);
+        dealImageView = findViewById(R.id.deal_image_view);
+        Button uploadButton = findViewById(R.id.upload_btn);
 
         dealPresenter = new DealPresenter(this);
 
@@ -49,6 +60,21 @@ public class InsertActivity extends BaseActivity implements InsertView {
         titleInput.setText(deal.getTitle());
         priceInput.setText(deal.getPrice());
         descInput.setText(deal.getDescription());
+
+        uploadButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                intent.setType("image/jpg");
+
+                intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
+                startActivityForResult(intent.createChooser(intent, "Select Picture"), PICTURE_REQUEST_CODE);
+            }
+        });
+
+        if (deal.getImage() != null) {
+            showImage(deal.getImage());
+        }
     }
 
 
@@ -158,6 +184,34 @@ public class InsertActivity extends BaseActivity implements InsertView {
         titleInput.setEnabled(isEnabled);
         priceInput.setEnabled(isEnabled);
         descInput.setEnabled(isEnabled);
+    }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == PICTURE_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
+            Uri imageUri = data.getData();
+            super.showProgressDialog("Uploading ...");
+            dealPresenter.uploadImage(imageUri);
+        }
+    }
+
+    @Override
+    public void onImageUploadSuccess(String imageUrl) {
+        deal.setImage(imageUrl);
+        showImage(imageUrl);
+        super.hideProgressDialog();
+    }
+
+    public void showImage(String imageUrl) {
+        if (imageUrl != null) {
+            int width = Resources.getSystem().getDisplayMetrics().widthPixels;
+            Picasso.get()
+                    .load(imageUrl)
+                    .resize(width, width * 2/3)
+                    .centerCrop()
+                    .into(dealImageView);
+        }
     }
 }

@@ -13,6 +13,8 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.jwx.travelmantics.constants.Constants;
 import com.jwx.travelmantics.deal_listing.ListActivity;
 
@@ -26,6 +28,8 @@ public class FirebaseApiService {
 
     private static FirebaseAuth fbAuth;
     private static FirebaseAuth.AuthStateListener authStateListener;
+    public static FirebaseStorage firebaseStorage;
+    public static StorageReference storageReference;
     private static final int RC_SIGN_IN = 123;
     public static boolean isAdmin;
 
@@ -52,6 +56,16 @@ public class FirebaseApiService {
                 checkAdmin(uid, caller);
             }
         };
+    }
+
+    public static void initStorage() {
+        firebaseStorage = FirebaseStorage.getInstance();
+        storageReference = firebaseStorage.getReference().child("deal_images");
+    }
+
+    public static StorageReference getStorageRootRef() {
+        firebaseStorage = FirebaseStorage.getInstance();
+        return  firebaseStorage.getReference().child("deal_images");
     }
 
     private static void checkAdmin(String uid, final ListActivity caller) {

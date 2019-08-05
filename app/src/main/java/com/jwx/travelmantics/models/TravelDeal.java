@@ -79,6 +79,7 @@ public class TravelDeal implements Serializable {
         result.put("title", title);
         result.put("price", price);
         result.put("description", description);
+        result.put("image", image);
         return result;
     }
 }
