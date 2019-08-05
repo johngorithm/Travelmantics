@@ -30,6 +30,7 @@ public class InsertActivity extends BaseActivity implements InsertView {
 
     private EditText titleInput, priceInput, descInput;
     private ImageView dealImageView;
+    private Button uploadButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,7 +47,7 @@ public class InsertActivity extends BaseActivity implements InsertView {
         priceInput = findViewById(R.id.price_input);
         descInput = findViewById(R.id.description_input);
         dealImageView = findViewById(R.id.deal_image_view);
-        Button uploadButton = findViewById(R.id.upload_btn);
+        uploadButton = findViewById(R.id.upload_btn);
 
         dealPresenter = new DealPresenter(this);
 
@@ -89,10 +90,12 @@ public class InsertActivity extends BaseActivity implements InsertView {
             saveOption.setVisible(true);
             deleteOption.setVisible(true);
             enableEditFields(true);
+            uploadButton.setEnabled(true);
         } else {
             saveOption.setVisible(false);
             deleteOption.setVisible(false);
             enableEditFields(false);
+            uploadButton.setEnabled(false);
         }
         return true;
     }

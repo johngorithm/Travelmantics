@@ -42,9 +42,10 @@ public class DealListAdapter extends RecyclerView.Adapter<DealListAdapter.DealVi
     @Override
     public void onBindViewHolder(@NonNull DealViewHolder holder, int position) {
         final TravelDeal travelDeal = travelDeals.get(position);
+        String formattedPrice = "$ "+travelDeal.getPrice();
 
         holder.titleView.setText(travelDeal.getTitle());
-        holder.priceView.setText(travelDeal.getPrice());
+        holder.priceView.setText(formattedPrice);
         holder.descView.setText(travelDeal.getDescription());
 
         showImage(travelDeal.getImage(), holder.dealImageView);
@@ -84,13 +85,13 @@ public class DealListAdapter extends RecyclerView.Adapter<DealListAdapter.DealVi
         notifyItemInserted(travelDeals.size() - 1);
     }
 
-    public void showImage(String imageUrl, ImageView dealImageView) {
-        if (imageUrl != null) {
-            Picasso.get()
-                    .load(imageUrl)
-                    .resize(100, 100)
-                    .centerCrop()
-                    .into(dealImageView);
-        }
+    private void showImage(String imageUrl, ImageView dealImageView) {
+        String tempImage = "https://firebasestorage.googleapis.com/v0/b/travelmantics-93b17.appspot.com/o/deal_images%2F1139754095?alt=media&token=4c981ba9-4520-4235-9f33-5c77f045886c";
+        String image = imageUrl != null && !imageUrl.isEmpty() ? imageUrl : tempImage;
+        Picasso.get()
+            .load(image)
+            .resize(100, 100)
+            .centerCrop()
+            .into(dealImageView);
     }
 }
