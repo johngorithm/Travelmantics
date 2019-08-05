@@ -36,9 +36,6 @@ public class FirebaseApiService {
         return FirebaseDatabase.getInstance().getReference();
     }
 
-    public static FirebaseAuth getFbAuthService() {
-        return FirebaseAuth.getInstance();
-    }
 
     public static void initAuthState(final ListActivity caller) {
         fbAuth = FirebaseAuth.getInstance();
