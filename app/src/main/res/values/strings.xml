@@ -9,4 +9,7 @@
     <string name="new_trave_deal_option_text">New Trave Deal</string>
     <string name="logout_text">Logout</string>
     <string name="upload_image_text">UPLOAD IMAGE</string>
+    <string name="description_example">Awesome wonders of a typical Nigeria woman. She is black and beautiful</string>
+    <string name="price_example">800</string>
+    <string name="title_example">Nigerian Summer Tour</string>
 </resources>

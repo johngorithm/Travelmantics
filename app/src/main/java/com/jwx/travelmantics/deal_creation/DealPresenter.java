@@ -63,7 +63,7 @@ class DealPresenter {
                 });
     }
 
-    void deleteDeal(TravelDeal travelDeal) {
+    void deleteDeal(final TravelDeal travelDeal) {
         fbRootRef.child(Constants.TRAVEL_DEAL_NODE).child(travelDeal.getUid()).removeValue()
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
@@ -71,6 +71,14 @@ class DealPresenter {
                         String msg = "Deal Deleted Successfully";
                         if (task.isSuccessful()) {
                             insertView.onDeleteDeal(msg);
+                            String imageName = travelDeal.getImageName();
+                            if (imageName != null && !imageName.isEmpty()) {
+                                Log.i(TAG, "deleteDeal(): Image has storage name!"+imageName);
+                                deleteDealImage(travelDeal.getImageName());
+                            } else {
+                                Log.i(TAG, "deleteDeal(): Image has NO storage name!"+imageName);
+                            }
+
                             return;
                         }
                         msg = "Unable to Delete deal. Mind trying again?";
@@ -80,12 +88,32 @@ class DealPresenter {
                 });
     }
 
+    private void deleteDealImage(final String imageName) {
+        StorageReference ref = FirebaseApiService.getStorageRootRef().child(imageName);
+        ref.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()) {
+                    Log.i(TAG, "deleteDealImage -> onComplete: Image deleted successfully");
+                    return;
+                }
+
+                if (task.getException() != null) {
+                    String exceptionMessage = task.getException().getMessage();
+                    Log.i(TAG, "deleteDealImage -> onComplete: "+exceptionMessage);
+                }
+                Log.i(TAG, "deleteDealImage -> onComplete: Unable to delete image");
+            }
+        });
+    }
+
 
     void uploadImage(Uri imageUri) {
         if(imageUri == null || imageUri.getLastPathSegment() == null) {
             return;
         }
         final StorageReference filePath = FirebaseApiService.getStorageRootRef()
+                .child(Constants.DEAL_IMAGE_FOLDER_NODE)
                 .child(imageUri.getLastPathSegment());
 
         Task<UploadTask.TaskSnapshot> uploadTask = filePath.putFile(imageUri);
@@ -93,10 +121,6 @@ class DealPresenter {
         Task<Uri> uriTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
             @Override
             public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task){
-                if (!task.isSuccessful()) {
-                    String msg = task.getException().getMessage();
-                    insertView.onSaveError(msg);
-                }
                 return filePath.getDownloadUrl();
             }
         });
@@ -109,10 +133,10 @@ class DealPresenter {
                             Toast.LENGTH_LONG).show();
 
                     String imgUrl = task.getResult().toString();
-                    String imageName = task.getResult().getLastPathSegment().split("/")[1];
+                    String imageName = task.getResult().getLastPathSegment();
 
-                    Log.i(TAG, "onComplete: "+imgUrl);
-                    Log.i(TAG, "onComplete: "+imageName);
+                    Log.i(TAG, "onComplete Url: "+imgUrl);
+                    Log.i(TAG, "onComplete Path: "+imageName);
 
                     insertView.onImageUploadSuccess(imgUrl, imageName);
                 } else if (task.getException() != null){

@@ -105,8 +105,8 @@ public class ListActivity extends BaseActivity implements DealListView {
     protected void onResume() {
         adapter = new DealListAdapter(this);
         dealRecyclerView.setAdapter(adapter);
-        FirebaseApiService.addAuthListener();
         dealListPresenter.fetchDeals();
+        FirebaseApiService.addAuthListener();
         super.onResume();
     }
 

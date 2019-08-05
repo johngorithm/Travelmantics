@@ -19,7 +19,6 @@ import android.widget.Toast;
 import com.jwx.travelmantics.R;
 import com.jwx.travelmantics.common.BaseActivity;
 import com.jwx.travelmantics.constants.Constants;
-import com.jwx.travelmantics.deal_listing.ListActivity;
 import com.jwx.travelmantics.models.TravelDeal;
 import com.jwx.travelmantics.services.FirebaseApiService;
 import com.squareup.picasso.Picasso;
@@ -156,7 +155,6 @@ public class InsertActivity extends BaseActivity implements InsertView {
     public void onSaveError(String message) {
         super.hideProgressDialog();
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
-        showListActivity();
     }
 
     @Override
@@ -170,12 +168,10 @@ public class InsertActivity extends BaseActivity implements InsertView {
     public void onDeleteDealError(String message) {
         super.hideProgressDialog();
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
-        showListActivity();
     }
 
     private void showListActivity(){
-        Intent intent = new Intent(this, ListActivity.class);
-        startActivity(intent);
+        onBackPressed();
     }
 
 

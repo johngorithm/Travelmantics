@@ -58,14 +58,9 @@ public class FirebaseApiService {
         };
     }
 
-    public static void initStorage() {
-        firebaseStorage = FirebaseStorage.getInstance();
-        storageReference = firebaseStorage.getReference().child("deal_images");
-    }
-
     public static StorageReference getStorageRootRef() {
         firebaseStorage = FirebaseStorage.getInstance();
-        return  firebaseStorage.getReference().child("deal_images");
+        return  firebaseStorage.getReference();
     }
 
     private static void checkAdmin(String uid, final ListActivity caller) {
